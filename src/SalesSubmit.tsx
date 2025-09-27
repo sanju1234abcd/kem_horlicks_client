@@ -171,7 +171,7 @@ const SalesSubmit: React.FC = () => {
         {/* Horlicks Sale */}
         <div>
           <label className="block text-sm font-semibold text-blue-800 mb-1">
-            Horlicks Tetra Sale
+            Horlicks Tetra Sale (20/-)
           </label>
           <input
             type="number"
@@ -186,7 +186,7 @@ const SalesSubmit: React.FC = () => {
         {/* Water 500ml Sale */}
         <div>
           <label className="block text-sm font-semibold text-blue-800 mb-1">
-            Mineral Water (500ml) Sale
+            Mineral Water (500ml) Sale (10/-)
           </label>
           <input
             type="number"
@@ -201,7 +201,7 @@ const SalesSubmit: React.FC = () => {
         {/* Water 1000ml Sale */}
         <div>
           <label className="block text-sm font-semibold text-blue-800 mb-1">
-            Mineral Water (1000ml) Sale
+            Mineral Water (1000ml) Sale (20/-)
           </label>
           <input
             type="number"
@@ -236,7 +236,7 @@ const SalesSubmit: React.FC = () => {
           <input
             type="Number"
             disabled = {true}
-            value={(Number(formData.horlicksSale) * 15 + Number(formData.water500mlSale) *10 + Number(formData.water1000mlSale) * 20)}
+            value={(Number(formData.horlicksSale) * 20 + Number(formData.water500mlSale) * 10 + Number(formData.water1000mlSale) * 20)}
             className="w-full opacity-40 border border-gray-300 rounded-lg p-3 text-base focus:ring-2 focus:ring-red-500 focus:border-red-500"
             required
           />
@@ -254,7 +254,7 @@ const SalesSubmit: React.FC = () => {
           {loading && (
             <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
           )}
-          {loading ? "Submitting..." : "Submit"}
+          {loading ? "Adding..." : "Add Sale"}
         </button>
       </form>
     </div>

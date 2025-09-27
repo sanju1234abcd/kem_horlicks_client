@@ -31,6 +31,7 @@ const ExportHorlicksExcel: React.FC = () => {
     setLoading(true);
     if(password !== "G7p!xQ2r") {
       toast.error("Incorrect password!");
+      setLoading(false);
       return;
     }
     else{
@@ -70,7 +71,7 @@ const ExportHorlicksExcel: React.FC = () => {
       // Add rows
       salesData.forEach((sale) => {
         const total =
-          Number(sale.horlicksSale) * 15 +
+          Number(sale.horlicksSale) * 20 +
           Number(sale.water500mlSale) * 10 +
           Number(sale.water1000mlSale) * 20;
 
