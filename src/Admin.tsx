@@ -30,7 +30,7 @@ const ExportHorlicksExcel: React.FC = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        `http://localhost:3000/api/v1/horlicks/get?shift=${shift}&subDate=${subDate}`
+        `${import.meta.env.VITE_BASE_URL}/api/v1/horlicks/get?shift=${shift}&subDate=${subDate}`
       );
 
       const result = await response.json()

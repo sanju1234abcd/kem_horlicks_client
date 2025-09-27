@@ -63,7 +63,7 @@ const SalesSubmit: React.FC = () => {
       const finalData = { ...formData, subDate };
 
       // 🔹 Simulate API call
-      const response = await fetch("http://localhost:3000/api/v1/horlicks/add", {
+      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/v1/horlicks/add`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
