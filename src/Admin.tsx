@@ -25,9 +25,15 @@ const ExportHorlicksExcel: React.FC = () => {
   const [shift, setShift] = useState("Morning");
   const [subDate, setSubDate] = useState(dateOptions[0]);
   const [loading, setLoading] = useState(false);
+  const [password, setPassword] = useState("");
 
   const fetchAndExport = async () => {
     setLoading(true);
+    if(password !== "G7p!xQ2r") {
+      toast.error("Incorrect password!");
+      return;
+    }
+    else{
     try {
       const response = await fetch(
         `${import.meta.env.VITE_BASE_URL}/api/v1/horlicks/get?shift=${shift}&subDate=${subDate}`
@@ -129,9 +135,10 @@ const ExportHorlicksExcel: React.FC = () => {
     } catch (err: any) {
       console.error(err);
       toast.error("Error fetching or creating Excel");
-    } finally {
-      setLoading(false);
     }
+    }
+    setLoading(false);
+    
   };
 
   return (
@@ -161,6 +168,22 @@ const ExportHorlicksExcel: React.FC = () => {
             </option>
           ))}
         </select>
+
+
+        {/*password*/}
+        <div>
+          <label className="block text-sm font-semibold text-blue-800 mb-1">
+            Password
+          </label>
+          <input
+            type="password"
+            name="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full border border-gray-300 rounded-lg p-3 text-base focus:ring-2 focus:ring-red-500 focus:border-red-500"
+            required
+          />
+        </div>
 
         {/* Export Button */}
         <button
