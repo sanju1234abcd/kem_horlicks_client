@@ -12,27 +12,52 @@ const locations = [
   "Samaj Sebi",
 ];
 
-// 🔹 Shift options
-const shifts = ["Morning", "Night"];
-
 // 🔹 Unique passwords for each location
 const locationPasswords: Record<string, string> = {
   "Bagbazar": "B4g@z8r",
   "Jodhpur Park": "J0d!P7k",
   "Shib Mandir": "Sh1b#M3",
   "Garia Naba Durga": "G@N8D2",
-  "Samaj Sebi": "S@m5S3b"
+  "Samaj Sebi": "S@m5S3b",
+};
+
+// 🔹 Detect current shift + subDate
+const getShiftAndDate = () => {
+  const now = moment().tz("Asia/Kolkata");
+
+  const hour = now.hour();
+  let shift: "Morning" | "Night";
+  let subDate = now;
+
+  if (hour >= 10 && hour < 22) {
+    // Morning shift (10 AM – 10 PM)
+    shift = "Morning";
+  } else {
+    // Night shift (10 PM – 10 AM next day)
+    shift = "Night";
+    if (hour < 10) {
+      // Early morning → belongs to yesterday’s night shift
+      subDate = now.clone().subtract(1, "day");
+    }
+  }
+
+  return {
+    shift,
+    subDate: subDate.format("DD/MM/YYYY"),
+  };
 };
 
 const SalesSubmit: React.FC = () => {
+  const { shift: detectedShift, subDate: detectedDate } = getShiftAndDate();
+
   const [formData, setFormData] = useState({
     location: locations[0],
-    shift: shifts[0],
+    shift: detectedShift,
     horlicksSale: "",
     water500mlSale: "",
     water1000mlSale: "",
     password: "",
-    subDate: "", // will be auto-added on submit
+    subDate: detectedDate, // auto-detected
   });
 
   const [loading, setLoading] = useState(false);
@@ -51,27 +76,32 @@ const SalesSubmit: React.FC = () => {
 
     try {
       // 🔑 Validate password
-      if (formData.password !== locationPasswords[formData.location]) {
-        toast.error("Incorrect password for selected location!");
+      if (
+        formData.password !==
+        `${locationPasswords[formData.location]}${
+          formData.shift === "Morning" ? "9ui" : "hu7"
+        }`
+      ) {
+        toast.error("Incorrect password for selected location and shift!");
         setLoading(false);
         return;
       }
 
-      // 🔹 Add submission date (India timezone)
-      const subDate = moment().tz("Asia/Kolkata").format("DD/MM/YYYY");
-
-      const finalData = { ...formData, subDate };
+      const finalData = { ...formData };
 
       // 🔹 Simulate API call
-      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/v1/horlicks/add`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(finalData),
-      })
+      const response = await fetch(
+        `${import.meta.env.VITE_BASE_URL}/api/v1/horlicks/add`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(finalData),
+        }
+      );
 
-      const result = await response.json() as {
+      const result = (await response.json()) as {
         success: boolean;
         message: string;
       };
@@ -114,7 +144,7 @@ const SalesSubmit: React.FC = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-500 to-red-500 p-6">
       <form
-      onSubmit={handleSubmit}
+        onSubmit={handleSubmit}
         className="bg-white backdrop-blur-md shadow-2xl rounded-2xl p-6 w-full max-w-md space-y-6 border border-blue-200"
       >
         {/* Branding */}
@@ -124,10 +154,12 @@ const SalesSubmit: React.FC = () => {
             alt="KEM Events"
             className="mx-auto mb-3 w-28 h-28 object-contain"
           />
-          <h1 className="text-2xl font-bold text-blue-800">
-            KEM Events Sales Form ( horlicks )
+          <h1 className="text-xl font-bold text-blue-800">
+            KEM Events Sales Form (horlicks)
           </h1>
-          <p className="text-sm text-gray-600">Salesperson Entry Portal for horlicks</p>
+          <p className="text-sm text-gray-600">
+            Salesperson Entry Portal for horlicks
+          </p>
         </div>
 
         {/* Location */}
@@ -149,23 +181,14 @@ const SalesSubmit: React.FC = () => {
           </select>
         </div>
 
-        {/* Shift */}
-        <div>
-          <label className="block text-sm font-semibold text-blue-800 mb-1">
-            Shift
-          </label>
-          <select
-            name="shift"
-            value={formData.shift}
-            onChange={handleChange}
-            className="w-full border border-gray-300 rounded-lg p-3 text-base focus:ring-2 focus:ring-red-500 focus:border-red-500"
-          >
-            {shifts.map((s) => (
-              <option key={s} value={s}>
-                {s}
-              </option>
-            ))}
-          </select>
+        {/* Auto-detected shift + date */}
+        <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
+          <p className="text-sm text-gray-700">
+            <strong>Shift:</strong> {formData.shift}
+          </p>
+          <p className="text-sm text-gray-700">
+            <strong>Date:</strong> {formData.subDate}
+          </p>
         </div>
 
         {/* Horlicks Sale */}
@@ -228,15 +251,19 @@ const SalesSubmit: React.FC = () => {
           />
         </div>
 
-        {/*sales amount */}
+        {/* Sales amount */}
         <div>
           <label className="block text-sm font-semibold text-blue-800 mb-1">
             Total Sales Amount
           </label>
           <input
             type="Number"
-            disabled = {true}
-            value={(Number(formData.horlicksSale) * 20 + Number(formData.water500mlSale) * 10 + Number(formData.water1000mlSale) * 20)}
+            disabled={true}
+            value={
+              Number(formData.horlicksSale) * 20 +
+              Number(formData.water500mlSale) * 10 +
+              Number(formData.water1000mlSale) * 20
+            }
             className="w-full opacity-40 border border-gray-300 rounded-lg p-3 text-base focus:ring-2 focus:ring-red-500 focus:border-red-500"
             required
           />
