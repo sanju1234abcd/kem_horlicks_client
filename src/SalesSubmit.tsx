@@ -199,6 +199,7 @@ const SalesSubmit: React.FC = () => {
           <input
             type="number"
             name="horlicksSale"
+            min={0}
             value={formData.horlicksSale}
             onChange={handleChange}
             className="w-full border border-gray-300 rounded-lg p-3 text-base focus:ring-2 focus:ring-red-500 focus:border-red-500"
@@ -214,6 +215,7 @@ const SalesSubmit: React.FC = () => {
           <input
             type="number"
             name="water500mlSale"
+            min={0}
             value={formData.water500mlSale}
             onChange={handleChange}
             className="w-full border border-gray-300 rounded-lg p-3 text-base focus:ring-2 focus:ring-red-500 focus:border-red-500"
@@ -229,6 +231,7 @@ const SalesSubmit: React.FC = () => {
           <input
             type="number"
             name="water1000mlSale"
+            min={0}
             value={formData.water1000mlSale}
             onChange={handleChange}
             className="w-full border border-gray-300 rounded-lg p-3 text-base focus:ring-2 focus:ring-red-500 focus:border-red-500"
